@@ -39,7 +39,6 @@ export default Vue.extend({
 
   computed: {
     filteredTimeline: function(): Array<TimelineItem> {
-      console.log(this.filterPath)
       if( !this.filterPath ) {
         return this.value
       }

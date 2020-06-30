@@ -24,7 +24,9 @@ export enum ParsedType {
 export class PiyopiyoCommandParser {
   parse(command: string): ParserResult<any> {
     const commandType = this._extractCommandType(command)
-    const commandValue = commandType ? command.replace(`\\${commandType} `, '') : command
+    let commandValue = commandType ? command.replace(`\\${commandType}`, '') : command
+
+    if( commandValue.substring(0, 1) === ' ' ) commandValue = commandValue.substring(1)
 
     switch(commandType) {
       case 'filter':
@@ -43,8 +45,8 @@ export class PiyopiyoCommandParser {
   }
 
   _extractCommandType(command: string): string {
-    const foundCommand = command.match(/^\\.* /)
-    return foundCommand ? foundCommand[0].substring(1, foundCommand[0].length - 1) : ''
+    const foundCommand = command.match(/^\\[a-zA-Z]*( |$)/)
+    return foundCommand ? foundCommand[0].substring(1, foundCommand[0].length).replace(' ', '') : ''
   }
 
   _buildExportResult(command: string): ParserResult<ExportParserResult> {
