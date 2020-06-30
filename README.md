@@ -1,5 +1,7 @@
 # piyopiyo-diary
 
+ぴよぴよダイアリー
+
 ## Project setup
 ```
 npm install
