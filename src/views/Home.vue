@@ -1,7 +1,5 @@
 <template>
   <div class="home">
-    ぴよぴよダイアリー
-
     <Timeline
       v-model="timelineItems"
       :filter-path="currentPath"
