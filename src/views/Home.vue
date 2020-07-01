@@ -2,6 +2,7 @@
   <div class="home">
     <Timeline
       v-model="timelineItems"
+      @selected-path="filter"
       :filter-path="currentPath"
     />
     <div class="bottom-tools">
