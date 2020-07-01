@@ -20,7 +20,6 @@ export enum ParsedType {
   Export
 }
 
-
 export class PiyopiyoCommandParser {
   parse(command: string): ParserResult<any> {
     const commandType = this._extractCommandType(command)

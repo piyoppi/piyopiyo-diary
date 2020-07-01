@@ -28,7 +28,6 @@ import PostForm from '@/components/PostForm.vue'
 import Timeline from '@/components/Timeline.vue'
 
 let lastId = 0;
-const exporter = new PiyopiyoPostExporter()
 
 export default Vue.extend({
   name: 'Home',
@@ -60,7 +59,8 @@ export default Vue.extend({
     },
 
     exportPosts: function() {
-      console.log(exporter.toText(this.timelineItems))
+      const exporter = new PiyopiyoPostExporter(this.timelineItems)
+      exporter.download()
     }
   }
 })
