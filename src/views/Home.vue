@@ -1,10 +1,13 @@
 <template>
   <div class="home">
-    <Timeline
-      v-model="timelineItems"
-      @selected-path="filter"
-      :filter-path="currentPath"
-    />
+    <div ref="timelineOuter" class="timeline-boundary">
+      <Timeline
+        ref="timeline"
+        v-model="timelineItems"
+        @selected-path="filter"
+        :filter-path="currentPath"
+      />
+    </div>
     <div class="bottom-tools">
       <div class="bottom-tools-item">
         <span class="mdi mdi-filter-outline"></span> {{ currentPath || 'all' }}
@@ -44,13 +47,21 @@ export default Vue.extend({
   },
 
   methods: {
-    addItem: function(message: string, path: string) {
+    addItem: async function(message: string, path: string) {
       this.timelineItems.push({
         path: this.currentPath || path,
         id: ++lastId,
         date: dayjs().format('HH:mm'),
         message
       })
+
+      await this.$nextTick()
+
+      const timelineElement: Element = (this.$refs.timeline as any).$el as Element
+      const timelineOuterElement: Element = this.$refs.timelineOuter as Element
+      const timelineBoundary = timelineElement.getBoundingClientRect()
+      const scrollValue = timelineBoundary.height
+      timelineOuterElement.scrollTo(0, scrollValue)
     },
 
     filter: function(path: string) {
@@ -76,5 +87,9 @@ export default Vue.extend({
 .bottom-tools-item {
   padding: 10px;
   font-size: 12pt;
+}
+.timeline-boundary {
+  height: calc(100vh - 100px);
+  overflow-y: scroll;
 }
 </style>
