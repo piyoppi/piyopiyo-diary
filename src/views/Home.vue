@@ -49,7 +49,7 @@ export default Vue.extend({
       this.timelineItems.push({
         path: this.currentPath || path,
         id: ++lastId,
-        date: dayjs().format('HH:mm:ss'),
+        date: dayjs().format('HH:mm'),
         message
       })
     },
