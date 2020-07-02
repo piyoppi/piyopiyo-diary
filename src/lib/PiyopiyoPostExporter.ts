@@ -8,7 +8,7 @@ export class PiyopiyoPostExporter {
   }
 
   _toTextTimeline(posts: Array<TimelineItem>): string {
-    return posts.reduce((acc: string, item: TimelineItem) => acc + `${item.date} ${item.message} \n`, '')
+    return posts.reduce((acc: string, item: TimelineItem) => acc + `- ${item.date} ${item.message} \n`, '')
   }
 
   _toTextGroupBy(): string {
