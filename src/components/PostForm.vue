@@ -47,6 +47,10 @@ export default Vue.extend({
         case ParsedType.Export:
           this.$emit('export')
           break;
+
+        case ParsedType.Delete:
+          this.$emit('delete-post')
+          break;
       }
 
       this.text = ''

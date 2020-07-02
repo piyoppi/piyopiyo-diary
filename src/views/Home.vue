@@ -16,6 +16,7 @@
         @post="addItem"
         @filter="filter"
         @export="exportPosts"
+        @delete-post="deletePost"
       />
     </div>
   </div>
@@ -71,6 +72,10 @@ export default Vue.extend({
     exportPosts: function() {
       const exporter = new PiyopiyoPostExporter(this.timelineItems)
       exporter.download()
+    },
+
+    deletePost: function() {
+      this.timelineItems.pop()
     }
   }
 })

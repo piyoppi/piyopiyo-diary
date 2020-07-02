@@ -7,7 +7,7 @@ export type FilterParserResult = {
   path: string;
 }
 
-export type ExportParserResult = {}
+export type PlainResult = {}
 
 export interface ParserResult<T> {
   mode: ParsedType;
@@ -17,7 +17,8 @@ export interface ParserResult<T> {
 export enum ParsedType {
   PostMessage,
   Filter,
-  Export
+  Export,
+  Delete
 }
 
 export class PiyopiyoCommandParser {
@@ -37,6 +38,10 @@ export class PiyopiyoCommandParser {
         return this._buildExportResult(commandValue)
         break;
 
+      case 'delete':
+        return this._buildDeletePostResult(commandValue)
+        break;
+
       default:
         return this._buildPostMessageResult(commandValue)
         break;
@@ -48,9 +53,16 @@ export class PiyopiyoCommandParser {
     return foundCommand ? foundCommand[0].substring(1, foundCommand[0].length).replace(' ', '') : ''
   }
 
-  _buildExportResult(command: string): ParserResult<ExportParserResult> {
+  _buildExportResult(command: string): ParserResult<PlainResult> {
     return {
       mode: ParsedType.Export,
+      data: {}
+    }
+  }
+
+  _buildDeletePostResult(command: string): ParserResult<PlainResult> {
+    return {
+      mode: ParsedType.Delete,
       data: {}
     }
   }
