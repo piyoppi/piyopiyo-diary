@@ -1,26 +1,40 @@
 <template>
   <div>
-    <ul class="timeline-list">
-      <li v-for="item in filteredTimeline" :key="item.id">
-        <div class="timeline-listitem-header">
-          <div class="timeline-listitem-header-item timeline-listitem-id">
-            <a href="#" @click="editPost(item.message, item.id)">#{{ item.id }}</a>
-          </div>
-          <div class="timeline-listitem-header-item timeline-listitem-path">
-            <a href="#" @click="pathSelected(item.path)">{{ item.path }}</a>
-          </div>
-          <div class="timeline-listitem-header-item timeline-listitem-date">{{ item.date }}</div>
-          <div class="timeline-listitem-header-item">
-            <button class="timeline-listitem-delete" @click="remove(item)">
-              <span class="mdi mdi-delete-outline"></span>
-            </button>
-          </div>
+    <transition-group class="timeline-list" name="timeline-list" tag="ul">
+      <li
+        draggable
+        @dragstart="itemDragStart($event, item)"
+        @dragenter="itemDragEnter(item)"
+        @dragend="itemDragEnd(item)"
+        class="timeline-listitem"
+        v-for="(item, index) in filteredTimeline"
+        :class="{'dragging-item': index === dragStartIndex}"
+        :key="item.id"
+      >
+        <div class="timeline-listitem-drag-handle">
+          <span class="mdi mdi-drag-vertical"></span>
         </div>
-        <div class="timeline-listitem-message">
-          {{ item.message }}
+        <div class="timeline-listitem-content">
+          <div class="timeline-listitem-header">
+            <div class="timeline-listitem-header-item timeline-listitem-id">
+              <a href="#" @click="editPost(item.message, item.id)">#{{ item.id }}</a>
+            </div>
+            <div class="timeline-listitem-header-item timeline-listitem-path">
+              <a href="#" @click="pathSelected(item.path)">{{ item.path }}</a>
+            </div>
+            <div class="timeline-listitem-header-item timeline-listitem-date">{{ item.date }}</div>
+            <div class="timeline-listitem-header-item">
+              <button class="timeline-listitem-delete" @click="remove(item)">
+                <span class="mdi mdi-delete-outline"></span>
+              </button>
+            </div>
+          </div>
+          <div class="timeline-listitem-message">
+            {{ item.message }}
+          </div>
         </div>
       </li>
-    </ul>
+    </transition-group>
   </div>
 </template>
 
@@ -28,14 +42,23 @@
 import Vue, { PropOptions } from 'vue'
 import { TimelineItem } from '@/types/Timeline'
 
+let disableDragEnterIndex = -1
+
 export default Vue.extend({
   name: 'Timeline',
+
+  data: function() {
+    return {
+      dragStartIndex: -1
+    }
+  },
 
   props: {
     value: {
       type: Array,
       required: true
     } as PropOptions<Array<TimelineItem>>,
+
     filterPath: {
       type: String,
       default: ''
@@ -65,6 +88,31 @@ export default Vue.extend({
 
     editPost: function(message: string, id: number) {
       this.$emit('edit', '', id)
+    },
+
+    itemDragStart: function(e: DragEvent, item: TimelineItem) {
+      // a workaround for Firefox browser
+      e.dataTransfer?.setData('dummy', 'foo')
+      this.dragStartIndex = this.value.findIndex(needle => item.id === needle.id)
+    },
+
+    itemDragEnter: function(item: TimelineItem) {
+      if( disableDragEnterIndex === item.id ) return
+
+      disableDragEnterIndex = item.id
+
+      const swapFrameSource = this.value[this.dragStartIndex]
+
+      const index = this.value.findIndex(needle => item.id === needle.id)
+      this.value.splice(this.dragStartIndex, 1)
+      this.value.splice(index, 0, swapFrameSource)
+      this.dragStartIndex = index
+
+      setTimeout(() => disableDragEnterIndex = -1, 150)
+    },
+
+    itemDragEnd: function() {
+      this.dragStartIndex = -1;
     }
   }
 })
@@ -81,6 +129,7 @@ export default Vue.extend({
   border-style: dotted;
   border-width: 0 0 1px 0;
   border-color: gainsboro;
+  transition: transform 0.1s ease 0s;
 }
 .timeline-listitem-delete {
   border: none;
@@ -116,5 +165,19 @@ export default Vue.extend({
 }
 .timeline-listitem-message {
   margin: 5px;
+}
+.timeline-listitem-drag-handle {
+  font-size: 20pt;
+  padding: 10px;
+  margin-right: 20px;
+  cursor: move;
+  opacity: 0.3;
+}
+.timeline-listitem {
+  display: flex;
+  align-items: center;
+}
+.dragging-item {
+  opacity: 0.3;
 }
 </style>
