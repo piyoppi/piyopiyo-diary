@@ -5,6 +5,7 @@
         ref="timeline"
         v-model="timelineItems"
         @selected-path="filter"
+        @edit="editPost"
         :filter-path="currentPath"
       />
     </div>
@@ -13,6 +14,7 @@
         <span class="mdi mdi-filter-outline"></span> {{ currentPath || 'all' }}
       </div>
       <PostForm
+        ref="postForm"
         v-model="text"
         @post="addItem"
         @filter="filter"
@@ -92,6 +94,7 @@ export default Vue.extend({
         const postedItem = this.timelineItems.find(item => item.id === id)
         if( postedItem ) {
           this.text = `\\e ${id} ${postedItem.message}`
+          this.$refs.postForm.focus()
         }
       }
     }

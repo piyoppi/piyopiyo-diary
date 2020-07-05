@@ -2,6 +2,7 @@
   <div class="postform-boundary">
     <form @submit.prevent="post">
       <input
+        ref="text"
         type="text"
         class="postform-textbox"
         placeholder="やっていることを端的に"
@@ -66,8 +67,13 @@ export default Vue.extend({
 
       this.$emit('input', '')
     },
+
     textChanged: function(e: InputEvent) {
       this.$emit('input', e.target.value)
+    },
+
+    focus: function() {
+      this.$refs.text.focus()
     }
   }
 })

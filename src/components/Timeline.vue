@@ -3,8 +3,8 @@
     <ul class="timeline-list">
       <li v-for="item in filteredTimeline" :key="item.id">
         <div class="timeline-listitem-header">
-          <div class="timeline-listitem-header-item">
-            #{{ item.id }}
+          <div class="timeline-listitem-header-item timeline-listitem-id">
+            <a href="#" @click="editPost(item.message, item.id)">#{{ item.id }}</a>
           </div>
           <div class="timeline-listitem-header-item timeline-listitem-path">
             <a href="#" @click="pathSelected(item.path)">{{ item.path }}</a>
@@ -61,6 +61,10 @@ export default Vue.extend({
 
     pathSelected: function(path: string) {
       this.$emit('selected-path', path)
+    },
+
+    editPost: function(message: string, id: number) {
+      this.$emit('edit', '', id)
     }
   }
 })
@@ -95,6 +99,16 @@ export default Vue.extend({
   text-decoration: none;
 }
 .timeline-listitem-path > a:hover {
+  text-decoration: underline;
+}
+.timeline-listitem-id {
+  color: gray;
+}
+.timeline-listitem-id > a, .timeline-listitem-id > a:visited {
+  color: gray;
+  text-decoration: none;
+}
+.timeline-listitem-id > a:hover {
   text-decoration: underline;
 }
 .timeline-listitem-date {
