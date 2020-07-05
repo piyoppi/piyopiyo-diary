@@ -105,6 +105,7 @@ export default Vue.extend({
 
     filter: function(path: string) {
       this.currentPath = path
+      this.groupByPath = false
     },
 
     exportPosts: function() {
