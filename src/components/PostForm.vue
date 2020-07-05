@@ -63,6 +63,10 @@ export default Vue.extend({
         case ParsedType.Delete:
           this.$emit('delete-post')
           break;
+
+        case ParsedType.GroupByPath:
+          this.$emit('group-by-path')
+          break;
       }
 
       this.$emit('input', '')

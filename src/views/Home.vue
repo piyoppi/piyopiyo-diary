@@ -3,9 +3,15 @@
     <div ref="timelineOuter" class="timeline-boundary">
       <Timeline
         ref="timeline"
+        v-if="!groupByPath"
         v-model="timelineItems"
         @selected-path="filter"
         @edit="editPost"
+        :filter-path="currentPath"
+      />
+      <TimelineGroupByPath
+        v-if="groupByPath"
+        v-model="timelineItems"
         :filter-path="currentPath"
       />
     </div>
@@ -26,6 +32,7 @@
         @export="exportPosts"
         @delete-post="deletePost"
         @edit="editPost"
+        @group-by-path="groupByPath = !groupByPath"
       />
     </div>
   </div>
@@ -38,6 +45,7 @@ import dayjs from 'dayjs'
 import { PiyopiyoPostExporter } from '@/lib/PiyopiyoPostExporter'
 import PostForm from '@/components/PostForm.vue'
 import Timeline from '@/components/Timeline.vue'
+import TimelineGroupByPath from '@/components/TimelineGroupByPath.vue'
 import SuggestionPopup, { Suggestion } from '@/components/SuggestionPopup.vue'
 
 let lastId = 0;
@@ -48,14 +56,16 @@ export default Vue.extend({
   components: {
     PostForm,
     Timeline,
-    SuggestionPopup
+    SuggestionPopup,
+    TimelineGroupByPath
   },
 
   data: function() {
     return {
       timelineItems: [] as Array<TimelineItem>,
       currentPath: '',
-      text: ''
+      text: '',
+      groupByPath: false
     }
   },
 
@@ -65,7 +75,8 @@ export default Vue.extend({
         {id: 1, text: '\\filter (\\f) 現在のパスを変更します', value: '\\filter '},
         {id: 2, text: '\\delete 最新の投稿を消します', value: '\\delete '},
         {id: 3, text: '\\edit (\\e) 最新の投稿を編集します', value: '\\edit '},
-        {id: 4, text: '\\export ファイルに出力します', value: '\\export '}
+        {id: 4, text: '\\export ファイルに出力します', value: '\\export '},
+        {id: 5, text: '\\groupby パスごとに分類します（あるいは分類をやめます）', value: '\\groupby'}
       ]
 
       return commandSuggestions
@@ -83,11 +94,13 @@ export default Vue.extend({
 
       await this.$nextTick()
 
-      const timelineElement: Element = (this.$refs.timeline as any).$el as Element
-      const timelineOuterElement: Element = this.$refs.timelineOuter as Element
-      const timelineBoundary = timelineElement.getBoundingClientRect()
-      const scrollValue = timelineBoundary.height
-      timelineOuterElement.scrollTo(0, scrollValue)
+      if( !this.groupByPath ) {
+        const timelineElement: Element = (this.$refs.timeline as any).$el as Element
+        const timelineOuterElement: Element = this.$refs.timelineOuter as Element
+        const timelineBoundary = timelineElement.getBoundingClientRect()
+        const scrollValue = timelineBoundary.height
+        timelineOuterElement.scrollTo(0, scrollValue)
+      }
     },
 
     filter: function(path: string) {

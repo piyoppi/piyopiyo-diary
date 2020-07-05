@@ -1,4 +1,5 @@
 import { TimelineItem } from '@/types/Timeline'
+import { extractGroupByPath } from '@/lib/PiyopiyoPathHelper'
 
 export class PiyopiyoPostExporter {
   private posts: Array<TimelineItem> = []
@@ -12,12 +13,7 @@ export class PiyopiyoPostExporter {
   }
 
   _toTextGroupBy(): string {
-    const groupsByPath = new Map<string, Array<TimelineItem>>();
-
-    this.posts.forEach( post => {
-      if( !groupsByPath.has(post.path) ) groupsByPath.set(post.path, [])
-      groupsByPath.get(post.path)?.push(post)
-    })
+    const groupsByPath = extractGroupByPath(this.posts)
 
     let timelineEachGroup = ''
     groupsByPath.forEach((value, key) => {

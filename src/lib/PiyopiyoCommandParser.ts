@@ -24,7 +24,8 @@ export enum ParsedType {
   Filter,
   Export,
   Delete,
-  Edit
+  Edit,
+  GroupByPath
 }
 
 export class PiyopiyoCommandParser {
@@ -49,6 +50,10 @@ export class PiyopiyoCommandParser {
       case 'e':
         return this._buildEditPostResult(commandValue)
 
+      case 'groupby':
+      case 'g':
+        return this._buildGroupByResult(commandValue)
+
       default:
         return this._buildPostMessageResult(commandValue)
     }
@@ -61,6 +66,13 @@ export class PiyopiyoCommandParser {
   _extractCommandType(command: string): string {
     const foundCommand = command.match(/^\\[a-zA-Z]*( |$)/)
     return foundCommand ? foundCommand[0].substring(1, foundCommand[0].length).replace(' ', '') : ''
+  }
+
+  _buildGroupByResult(command: string): ParserResult<PlainResult> {
+    return {
+      mode: ParsedType.GroupByPath,
+      data: {}
+    }
   }
 
   _buildExportResult(command: string): ParserResult<PlainResult> {
