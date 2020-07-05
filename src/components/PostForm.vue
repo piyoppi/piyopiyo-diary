@@ -5,7 +5,8 @@
         type="text"
         class="postform-textbox"
         placeholder="やっていることを端的に"
-        v-model="text"
+        :value="value"
+        @input="textChanged"
       />
       <button class="postform-submit">
         <span class="mdi mdi-send"></span>
@@ -15,7 +16,7 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
+import Vue, { PropOptions } from 'vue'
 import {
   PiyopiyoCommandParser,
   ParsedType
@@ -26,18 +27,28 @@ const parser = new PiyopiyoCommandParser()
 export default Vue.extend({
   data: function() {
     return {
-      text: ''
     }
+  },
+  props: {
+    value: {
+      type: String,
+      default: ''
+    } as PropOptions<string>
   },
   methods: {
     post: function() {
-      if( this.text === '' ) return;
+      if( this.value === '' ) return;
 
-      const result = parser.parse(this.text)
+      const result = parser.parse(this.value)
 
       switch(result.mode) {
         case ParsedType.PostMessage:
           this.$emit('post', result.data.message, result.data.path)
+          break;
+
+        case ParsedType.Edit:
+          this.$emit('edit', result.data.message, result.data.id)
+          if( result.data.message === '' ) return;
           break;
 
         case ParsedType.Filter:
@@ -53,7 +64,10 @@ export default Vue.extend({
           break;
       }
 
-      this.text = ''
+      this.$emit('input', '')
+    },
+    textChanged: function(e: InputEvent) {
+      this.$emit('input', e.target.value)
     }
   }
 })

@@ -7,6 +7,11 @@ export type FilterParserResult = {
   path: string;
 }
 
+export type EditParserResult = {
+  id: number;
+  message: string;
+}
+
 export type PlainResult = {}
 
 export interface ParserResult<T> {
@@ -18,7 +23,8 @@ export enum ParsedType {
   PostMessage,
   Filter,
   Export,
-  Delete
+  Delete,
+  Edit
 }
 
 export class PiyopiyoCommandParser {
@@ -32,19 +38,19 @@ export class PiyopiyoCommandParser {
       case 'filter':
       case 'f':
         return this._buildFilterResult(commandValue)
-        break;
 
       case 'export':
         return this._buildExportResult(commandValue)
-        break;
 
       case 'delete':
         return this._buildDeletePostResult(commandValue)
-        break;
+
+      case 'edit':
+      case 'e':
+        return this._buildEditPostResult(commandValue)
 
       default:
         return this._buildPostMessageResult(commandValue)
-        break;
     }
   }
 
@@ -85,6 +91,20 @@ export class PiyopiyoCommandParser {
       mode: ParsedType.PostMessage,
       data: {
         path,
+        message
+      }
+    }
+  }
+
+  _buildEditPostResult(command: string): ParserResult<EditParserResult> {
+    const splittedCommand = command.split(' ')
+    const id = splittedCommand.length > 1 ? parseInt(splittedCommand[0]) : -1
+    const message = splittedCommand.length > 1 ? splittedCommand[1] : splittedCommand[0]
+
+    return {
+      mode: ParsedType.Edit,
+      data: {
+        id,
         message
       }
     }

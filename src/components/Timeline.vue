@@ -3,6 +3,9 @@
     <ul class="timeline-list">
       <li v-for="item in filteredTimeline" :key="item.id">
         <div class="timeline-listitem-header">
+          <div class="timeline-listitem-header-item">
+            #{{ item.id }}
+          </div>
           <div class="timeline-listitem-header-item timeline-listitem-path">
             <a href="#" @click="pathSelected(item.path)">{{ item.path }}</a>
           </div>
@@ -82,10 +85,10 @@ export default Vue.extend({
 .timeline-listitem-header-item {
   font-size: 9pt;
   display: inline-block;
+  margin-right: 20px;
 }
 .timeline-listitem-path {
   color: gray;
-  margin: 5px;
 }
 .timeline-listitem-path > a, .timeline-listitem-path > a:visited {
   color: gray;
@@ -96,7 +99,6 @@ export default Vue.extend({
 }
 .timeline-listitem-date {
   color: gray;
-  margin: 5px;
 }
 .timeline-listitem-message {
   margin: 5px;

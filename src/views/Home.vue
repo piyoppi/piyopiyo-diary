@@ -13,10 +13,12 @@
         <span class="mdi mdi-filter-outline"></span> {{ currentPath || 'all' }}
       </div>
       <PostForm
+        v-model="text"
         @post="addItem"
         @filter="filter"
         @export="exportPosts"
         @delete-post="deletePost"
+        @edit="editPost"
       />
     </div>
   </div>
@@ -43,7 +45,8 @@ export default Vue.extend({
   data: function() {
     return {
       timelineItems: [] as Array<TimelineItem>,
-      currentPath: ''
+      currentPath: '',
+      text: ''
     }
   },
 
@@ -76,6 +79,21 @@ export default Vue.extend({
 
     deletePost: function() {
       this.timelineItems.pop()
+    },
+
+    editPost: function(message: string, id: number) {
+      if(id < 0) id = this.timelineItems[this.timelineItems.length - 1].id
+      if( message ) {
+        const timelineItemIndex = this.timelineItems.findIndex(item => item.id === id)
+        if( timelineItemIndex >= 0 ) {
+          this.timelineItems[timelineItemIndex].message = message
+        }
+      } else {
+        const postedItem = this.timelineItems.find(item => item.id === id)
+        if( postedItem ) {
+          this.text = `\\e ${id} ${postedItem.message}`
+        }
+      }
     }
   }
 })
