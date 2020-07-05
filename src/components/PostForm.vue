@@ -69,11 +69,12 @@ export default Vue.extend({
     },
 
     textChanged: function(e: InputEvent) {
+      if (!(e.target instanceof HTMLInputElement)) return;
       this.$emit('input', e.target.value)
     },
 
     focus: function() {
-      this.$refs.text.focus()
+      (this.$refs.text as any).focus()
     }
   }
 })

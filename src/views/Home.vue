@@ -93,8 +93,8 @@ export default Vue.extend({
       } else {
         const postedItem = this.timelineItems.find(item => item.id === id)
         if( postedItem ) {
-          this.text = `\\e ${id} ${postedItem.message}`
-          this.$refs.postForm.focus()
+          this.text = `\\e ${id} ${postedItem.message}`;
+          (this.$refs.postForm as any).focus()
         }
       }
     }
