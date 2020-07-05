@@ -39,7 +39,7 @@
 </template>
 
 <script lang="ts">
-import Vue, { PropOptions } from 'vue'
+import Vue from 'vue'
 import { TimelineItem } from '@/types/Timeline'
 import dayjs from 'dayjs'
 import { PiyopiyoPostExporter } from '@/lib/PiyopiyoPostExporter'
@@ -128,7 +128,7 @@ export default Vue.extend({
         const postedItem = this.timelineItems.find(item => item.id === id)
         if( postedItem ) {
           this.text = `\\e ${id} ${postedItem.message}`;
-          (this.$refs.postForm as any).focus()
+          (this.$refs.postForm as HTMLElement).focus()
         }
       }
     },

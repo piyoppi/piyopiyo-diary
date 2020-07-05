@@ -37,7 +37,6 @@ export default Vue.extend({
       for( const path of extractGroupByPath(this.value).keys() ) {
         pathes.push(path)
       }
-      console.log(pathes)
       return pathes
     }
   },
