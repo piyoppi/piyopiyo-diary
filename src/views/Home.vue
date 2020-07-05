@@ -13,6 +13,11 @@
       <div class="bottom-tools-item">
         <span class="mdi mdi-filter-outline"></span> {{ currentPath || 'all' }}
       </div>
+      <SuggestionPopup
+        :suggestions="suggestions"
+        :text="text"
+        @accepted="acceptedSuggestion"
+      />
       <PostForm
         ref="postForm"
         v-model="text"
@@ -33,6 +38,7 @@ import dayjs from 'dayjs'
 import { PiyopiyoPostExporter } from '@/lib/PiyopiyoPostExporter'
 import PostForm from '@/components/PostForm.vue'
 import Timeline from '@/components/Timeline.vue'
+import SuggestionPopup, { Suggestion } from '@/components/SuggestionPopup.vue'
 
 let lastId = 0;
 
@@ -41,7 +47,8 @@ export default Vue.extend({
 
   components: {
     PostForm,
-    Timeline
+    Timeline,
+    SuggestionPopup
   },
 
   data: function() {
@@ -49,6 +56,19 @@ export default Vue.extend({
       timelineItems: [] as Array<TimelineItem>,
       currentPath: '',
       text: ''
+    }
+  },
+
+  computed: {
+    suggestions: function(): Array<Suggestion> {
+      const commandSuggestions = [
+        {id: 1, text: '\\filter (\\f) 現在のパスを変更します', value: '\\filter '},
+        {id: 2, text: '\\delete 最新の投稿を消します', value: '\\delete '},
+        {id: 3, text: '\\edit (\\e) 最新の投稿を編集します', value: '\\edit '},
+        {id: 4, text: '\\export ファイルに出力します', value: '\\export '}
+      ]
+
+      return commandSuggestions
     }
   },
 
@@ -97,6 +117,10 @@ export default Vue.extend({
           (this.$refs.postForm as any).focus()
         }
       }
+    },
+
+    acceptedSuggestion: function(value: string) {
+      this.text = value
     }
   }
 })

@@ -54,6 +54,10 @@ export class PiyopiyoCommandParser {
     }
   }
 
+  isCommandTyping(command: string): boolean {
+    return (command.substring(0, 1) === '\\') && (command.indexOf(' ') < 0)
+  }
+
   _extractCommandType(command: string): string {
     const foundCommand = command.match(/^\\[a-zA-Z]*( |$)/)
     return foundCommand ? foundCommand[0].substring(1, foundCommand[0].length).replace(' ', '') : ''
