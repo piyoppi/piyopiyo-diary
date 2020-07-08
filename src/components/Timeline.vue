@@ -2,16 +2,18 @@
   <div>
     <transition-group class="timeline-list" name="timeline-list" tag="ul">
       <li
-        draggable
-        @dragstart="itemDragStart($event, item)"
-        @dragenter="itemDragEnter(item)"
-        @dragend="itemDragEnd(item)"
         class="timeline-listitem"
         v-for="(item, index) in filteredTimeline"
         :class="{'dragging-item': index === dragStartIndex}"
         :key="item.id"
       >
-        <div class="timeline-listitem-drag-handle">
+        <div
+          class="timeline-listitem-drag-handle"
+          draggable
+          @dragstart="itemDragStart($event, item)"
+          @dragenter="itemDragEnter(item)"
+          @dragend="itemDragEnd(item)"
+        >
           <span class="mdi mdi-drag-vertical"></span>
         </div>
         <div class="timeline-listitem-content">
