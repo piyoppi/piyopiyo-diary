@@ -7,6 +7,7 @@
         :class="{'dragging-item': index === dragStartIndex}"
         :key="item.id"
       >
+        <div class="timeline-listitem-colorbar" :style="{'background-color': item.color}"></div>
         <div
           class="timeline-listitem-drag-handle"
           draggable
@@ -181,5 +182,9 @@ export default Vue.extend({
 }
 .dragging-item {
   opacity: 0.3;
+}
+.timeline-listitem-colorbar {
+  width: 3px;
+  min-height: 40px;
 }
 </style>

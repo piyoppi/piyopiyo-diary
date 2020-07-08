@@ -3,4 +3,5 @@ export interface TimelineItem {
   id: number;
   message: string;
   date: string;
+  color: string;
 }

@@ -49,6 +49,13 @@ import TimelineGroupByPath from '@/components/TimelineGroupByPath.vue'
 import SuggestionPopup, { Suggestion } from '@/components/SuggestionPopup.vue'
 
 let lastId = 0;
+const colors = [
+  '#0099ff',
+  '#ff9900',
+  '#99cc66',
+  '#6600ff',
+]
+const pathToColorMap = new Map<string, string>()
 
 export default Vue.extend({
   name: 'Home',
@@ -85,13 +92,17 @@ export default Vue.extend({
 
   methods: {
     addItem: async function(message: string, path: string) {
+      const currentPath = this.currentPath || path
+
+      if( !pathToColorMap.has(currentPath) ) pathToColorMap.set(currentPath, colors[pathToColorMap.size % colors.length])
+
       this.timelineItems.push({
-        path: this.currentPath || path,
+        path: currentPath,
         id: ++lastId,
         date: dayjs().format('HH:mm'),
-        message
+        message,
+        color: pathToColorMap.get(currentPath) || 'white'
       })
-
       await this.$nextTick()
 
       if( !this.groupByPath ) {
