@@ -36,4 +36,4 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./dist
           allow_empty_commit: true
-              
+          cname: piyopiyo-diary.garakuta-toolbox.com
