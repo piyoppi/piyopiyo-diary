@@ -33,6 +33,9 @@
         @delete-post="deletePost"
         @edit="editPost"
         @group-by-path="groupByPath = !groupByPath"
+        @set-calendar-key="SetCalendarKey"
+        @set-calendar-id="SetCalendarId"
+        @sync="sync"
       />
     </div>
   </div>
@@ -47,6 +50,14 @@ import PostForm from '@/components/PostForm.vue'
 import Timeline from '@/components/Timeline.vue'
 import TimelineGroupByPath from '@/components/TimelineGroupByPath.vue'
 import SuggestionPopup, { Suggestion } from '@/components/SuggestionPopup.vue'
+import {
+  LinkToGoogleCalendar,
+  storeGoogleCalendarClientId,
+  getGoogleCalendarClientId,
+  hasGoogleCalendarSettings,
+  storeGoogleCalendarId,
+  getGoogleCalendarId
+} from '@/lib/LinkToGoogleCalendar'
 
 let lastId = 0;
 const colors = [
@@ -55,7 +66,9 @@ const colors = [
   '#99cc66',
   '#6600ff',
 ]
+
 const pathToColorMap = new Map<string, string>()
+let googleCalendarLinker: LinkToGoogleCalendar | null = null
 
 export default Vue.extend({
   name: 'Home',
@@ -146,6 +159,45 @@ export default Vue.extend({
 
     acceptedSuggestion: function(value: string) {
       this.text = value
+    },
+
+    SetCalendarKey: function(value: string) {
+      storeGoogleCalendarClientId(value)
+    },
+
+    SetCalendarId: function(value: string) {
+      storeGoogleCalendarId(value)
+    },
+
+    sync: async function() {
+      if( !hasGoogleCalendarSettings() ) return
+
+      if( !googleCalendarLinker ) {
+        googleCalendarLinker = new LinkToGoogleCalendar(
+          getGoogleCalendarClientId(),
+          getGoogleCalendarId(),
+        )
+        await googleCalendarLinker.prepare()
+      }
+
+      await googleCalendarLinker.authenticate()
+      await googleCalendarLinker.loadClient()
+      const response: any = await googleCalendarLinker.getTodayEvents()
+      
+      const eventPath = response.result.items.forEach((eventItem: any) => {
+        const path = eventItem.summary
+        const startTime = dayjs(eventItem.start.dateTime).format('HH:mm')
+        const endTime = dayjs(eventItem.end.dateTime).format('HH:mm')
+
+        if( !pathToColorMap.has(path) ) pathToColorMap.set(path, colors[pathToColorMap.size % colors.length])
+        this.timelineItems.push({
+          path,
+          id: ++lastId,
+          date: dayjs().format('HH:mm'),
+          message: `${eventItem.summary} (${startTime} ～ ${endTime}のできごと)`,
+          color: pathToColorMap.get(path) || 'white'
+        })
+      })
     }
   }
 })

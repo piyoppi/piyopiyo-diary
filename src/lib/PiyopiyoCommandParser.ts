@@ -12,6 +12,10 @@ export type EditParserResult = {
   message: string;
 }
 
+export type SetCalendarKeyResult = {
+  key: string;
+}
+
 export type PlainResult = {}
 
 export interface ParserResult<T> {
@@ -25,7 +29,10 @@ export enum ParsedType {
   Export,
   Delete,
   Edit,
-  GroupByPath
+  GroupByPath,
+  SetCalendarKey,
+  SetCalendarId,
+  Sync,
 }
 
 export class PiyopiyoCommandParser {
@@ -54,6 +61,15 @@ export class PiyopiyoCommandParser {
       case 'g':
         return this._buildGroupByResult(commandValue)
 
+      case 'set-calendar-key':
+        return this._buildCalendarKeyResult(commandValue)
+
+      case 'set-calendar-id':
+        return this._buildCalendarIdResult(commandValue)
+
+      case 'sync':
+        return this._buildSyncResult(commandValue)
+
       default:
         return this._buildPostMessageResult(commandValue)
     }
@@ -64,8 +80,33 @@ export class PiyopiyoCommandParser {
   }
 
   _extractCommandType(command: string): string {
-    const foundCommand = command.match(/^\\[a-zA-Z]*( |$)/)
+    const foundCommand = command.match(/^\\[a-zA-Z-]*( |$)/)
     return foundCommand ? foundCommand[0].substring(1, foundCommand[0].length).replace(' ', '') : ''
+  }
+
+  _buildSyncResult(command: string): ParserResult<PlainResult> {
+    return {
+      mode: ParsedType.Sync,
+      data: {}
+    }
+  }
+
+  _buildCalendarKeyResult(command: string): ParserResult<SetCalendarKeyResult> {
+    return {
+      mode: ParsedType.SetCalendarKey,
+      data: {
+        key: command
+      }
+    }
+  }
+
+  _buildCalendarIdResult(command: string): ParserResult<SetCalendarKeyResult> {
+    return {
+      mode: ParsedType.SetCalendarId,
+      data: {
+        key: command
+      }
+    }
   }
 
   _buildGroupByResult(command: string): ParserResult<PlainResult> {

@@ -67,6 +67,18 @@ export default Vue.extend({
         case ParsedType.GroupByPath:
           this.$emit('group-by-path')
           break;
+
+        case ParsedType.SetCalendarKey:
+          this.$emit('set-calendar-key', result.data.key)
+          break;
+
+        case ParsedType.SetCalendarId:
+          this.$emit('set-calendar-id', result.data.key)
+          break;
+
+        case ParsedType.Sync:
+          this.$emit('sync')
+          break;
       }
 
       this.$emit('input', '')
